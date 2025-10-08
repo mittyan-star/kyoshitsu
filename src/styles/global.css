@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f9fafb;
+  color: #0f172a;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+main {
+  width: min(960px, 92vw);
+  margin: 0 auto;
+  padding: 3rem 0 4rem;
+}
+
+.summary-box {
+  background: #e0f2fe;
+  border-left: 4px solid #1d4ed8;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0 2rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.section p {
+  line-height: 1.9;
+}
+
+.cta-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #cbd5f5;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.table thead {
+  background: #e2e8f0;
+}
+
+.cards {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.prose {
+  color: #0f172a;
+  line-height: 1.8;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose p {
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

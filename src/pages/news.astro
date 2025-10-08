@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../lib/schema';
+
+const newsItems = [
+  { date: '2024-02-10', title: '春の体験ウィーク受付開始', detail: '3/1〜3/10は毎日体験授業を実施します。予約フォームからご希望日時を選択ください。' },
+  { date: '2024-01-20', title: 'Cosmos Party参加者募集', detail: '3/20開催のCosmos Partyでは地域の大人との交流タイムを拡充します。' },
+];
+
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'お知らせ', item: 'https://example.com/news' },
+  ]),
+];
+---
+<BaseLayout
+  title="お知らせ｜最新情報とリリース"
+  description="みっちゃん塾のお知らせ一覧。体験ウィーク、Cosmos Partyなどの最新情報を掲載します。"
+  path="/news"
+  summary="イベント募集や休講情報など最新のお知らせを随時更新しています。"
+  breadcrumbs={[{ href: '/news', label: 'お知らせ' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">最新のお知らせ</h1>
+    <ul class="space-y-4">
+      {newsItems.map((item) => (
+        <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <p class="text-xs text-slate-500">{item.date}</p>
+          <h2 class="text-lg font-semibold text-blue-700">{item.title}</h2>
+          <p class="mt-2 text-sm text-slate-600">{item.detail}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
