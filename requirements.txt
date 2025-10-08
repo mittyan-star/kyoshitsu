@@ -1,0 +1,23 @@
+# requirements.txt
+# --- Base (minimal, cross-platform) ---
+Pillow>=10.0.0
+Jinja2>=3.1
+python-slugify>=8.0.0
+requests>=2.31.0
+
+# --- Optional: generate OG images from SVG (requires system Cairo) ---
+# cairosvg>=2.7.0
+
+# --- Optional: PDF generation for handouts/worksheets ---
+# reportlab>=4.0.0
+
+# --- Optional: Google APIs from CI (if you ever pull Sheets/Drive without GAS) ---
+# google-api-python-client>=2.129.0
+# google-auth>=2.28.0
+# google-auth-httplib2>=0.2.0
+# google-auth-oauthlib>=1.2.0
+
+# --- Dev tools (optional) ---
+# black>=24.3.0
+# ruff>=0.4.0
+# pre-commit>=3.6.0
