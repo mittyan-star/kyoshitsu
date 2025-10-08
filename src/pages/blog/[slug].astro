@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { articleSchema, breadcrumbSchema } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: any };
+const { data } = entry;
+const { Content } = await entry.render();
+
+const structuredData = [
+  articleSchema({
+    title: data.title,
+    description: data.description,
+    url: `https://example.com/blog/${entry.slug}`,
+    image: data.heroImage ?? 'https://example.com/og-default.png',
+    publishedAt: data.publishDate,
+  }),
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'ブログ', item: 'https://example.com/blog' },
+    { name: data.title, item: `https://example.com/blog/${entry.slug}` },
+  ]),
+];
+---
+<BaseLayout
+  title={`${data.title}｜みっちゃん塾ブログ`}
+  description={data.description}
+  path={`/blog/${entry.slug}`}
+  summary={`公開日：${data.publishDate}／生徒が説明する学びの現場レポートです。`}
+  breadcrumbs={[
+    { href: '/blog', label: 'ブログ' },
+    { href: `/blog/${entry.slug}`, label: data.title },
+  ]}
+  structuredData={structuredData}
+>
+  <article class="section prose max-w-none prose-headings:text-slate-900 prose-p:text-slate-700">
+    <h1>{data.title}</h1>
+    <p class="text-sm text-slate-500">公開日：{data.publishDate}</p>
+    <Content />
+  </article>
+</BaseLayout>

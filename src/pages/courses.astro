@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTAButton from '../components/CTAButton.astro';
+import { breadcrumbSchema } from '../lib/schema';
+
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'コース', item: 'https://example.com/courses' },
+  ]),
+];
+
+const courses = [
+  {
+    title: '小学生：思考の土台づくり',
+    target: '小3〜小6',
+    focus: '図形・文章題の読み解き、対話を通じた表現力、STEAMワークショップ',
+    goal: '説明することが楽しいと感じ、論理的に話す骨組みを身につける',
+  },
+  {
+    title: '中学生：探究×高校受験対策',
+    target: '中1〜中3',
+    focus: '主要教科の思考プロセス、探究型課題、定期テスト前のピンポイント指導',
+    goal: '京阪神私立高校に向けて主体的な学習サイクルを確立する',
+  },
+  {
+    title: '高校生：京大数学レベルの思考訓練',
+    target: '高1〜高3',
+    focus: '難関数学の思考プロセス言語化、記述答案の添削、プロジェクト型探究',
+    goal: '大学入試と社会課題に向けた論理構築力・プレゼン力を磨く',
+  },
+];
+---
+<BaseLayout
+  title="コース紹介｜小中高の個別最適と探究プロジェクト"
+  description="小学生・中学生・高校生それぞれのコースで、生徒の説明力と探究力を育てるカリキュラムを紹介。京大数学志望まで対応。"
+  path="/courses"
+  summary="小学生は思考の土台、中学生は探究と受験両立、高校生は京大数学レベルの思考訓練まで一貫サポート。"
+  breadcrumbs={[{ href: '/courses', label: 'コース' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">学年と目的に合わせた3コース</h1>
+    <table class="table mt-6">
+      <thead>
+        <tr>
+          <th>コース</th>
+          <th>対象</th>
+          <th>指導内容</th>
+          <th>到達目標</th>
+        </tr>
+      </thead>
+      <tbody>
+        {courses.map((course) => (
+          <tr>
+            <td class="font-semibold">{course.title}</td>
+            <td>{course.target}</td>
+            <td>{course.focus}</td>
+            <td>{course.goal}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2>探究プロジェクト例</h2>
+    <ul class="list-disc space-y-2 pl-6">
+      <li>地域課題をテーマにしたボードゲーム制作とテストプレイ</li>
+      <li>宇治の観光資源を英語で紹介するプレゼン</li>
+      <li>京大数学過去問を題材にした問題発表と解説動画づくり</li>
+    </ul>
+    <div class="mt-6">
+      <CTAButton href="/schedule" label="開講スケジュールを見る" />
+    </div>
+  </section>
+</BaseLayout>

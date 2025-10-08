@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTAButton from '../components/CTAButton.astro';
+import { breadcrumbSchema } from '../lib/schema';
+
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: '学習法', item: 'https://example.com/method' },
+  ]),
+];
+---
+<BaseLayout
+  title="学習法｜生徒が説明するプロセスとワンフレーズ報告"
+  description="みっちゃん塾の学習法。生徒が説明する授業、聞き手としての先生、ワンフレーズ報告、プレゼン教育の4つの柱を紹介します。"
+  path="/method"
+  summary="生徒が説明し、先生は聞き手となり、ワンフレーズ報告で家庭とつながり、プレゼン教育で社会につなげる4ステップ学習法。"
+  breadcrumbs={[{ href: '/method', label: '学習法' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">4つの柱で学びを循環させる</h1>
+    <p>
+      生徒の説明から始まり、先生が問い返しで伴走し、家庭とワンフレーズ報告で共有し、プレゼンテーションで社会につなげる。みっちゃん塾の学習法はこの循環を毎週の授業で回し続けます。
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>1. 生徒が説明する授業</h2>
+    <p>
+      すべての授業で「解き方を言葉にする」時間を確保します。説明の中で曖昧な箇所を洗い出し、思考のプロセスを可視化します。
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>2. 先生は聞き手であり伴走者</h2>
+    <p>
+      先生は答えを提示せず、生徒の思考を深堀りする質問を投げかけます。「どうしてそう考えた？」「別の方法は？」と問いかけ、仮説検証型の学びを促します。
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>3. ワンフレーズ報告</h2>
+    <p>
+      授業の終わりに「今日は◯◯を学び、◯◯ができるようになりました」と30秒で収録。LINEで保護者へ共有し、家庭での会話のきっかけをつくります。
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>4. プレゼン教育</h2>
+    <p>
+      探究プロジェクトやCosmos Partyで成果を発表。人前で伝える経験を重ね、学びの意義を社会と共有します。
+    </p>
+    <div class="mt-6">
+      <CTAButton href="/courses" label="コースと指導範囲を見る" />
+    </div>
+  </section>
+</BaseLayout>

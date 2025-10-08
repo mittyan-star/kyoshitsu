@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../lib/schema';
+
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'ポリシー', item: 'https://example.com/policy' },
+  ]),
+];
+---
+<BaseLayout
+  title="プライバシーポリシー・免責事項"
+  description="みっちゃん塾のプライバシーポリシーと免責事項。個人情報の取り扱い、アクセス解析、免責事項について記載しています。"
+  path="/policy"
+  summary="個人情報は体験予約・連絡以外に利用しません。Google Analyticsなどの解析ツールを使用し、改善に役立てています。"
+  breadcrumbs={[{ href: '/policy', label: 'ポリシー' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">プライバシーポリシー</h1>
+    <h2 class="mt-6 text-xl font-semibold">個人情報の利用目的</h2>
+    <p>体験予約やお問い合わせへの回答、サービス改善のために利用します。</p>
+
+    <h2 class="mt-6 text-xl font-semibold">アクセス解析</h2>
+    <p>Google Analytics 4 を利用し、サイト改善のための統計データを取得します。</p>
+
+    <h2 class="mt-6 text-xl font-semibold">免責事項</h2>
+    <p>当サイトに掲載する情報について細心の注意を払っていますが、利用によって生じたいかなる損害についても責任を負いません。</p>
+  </section>
+</BaseLayout>

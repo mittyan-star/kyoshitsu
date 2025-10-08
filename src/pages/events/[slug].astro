@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { articleSchema, breadcrumbSchema } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events');
+  return events.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: any };
+const { data } = entry;
+const { Content } = await entry.render();
+
+const structuredData = [
+  articleSchema({
+    title: data.title,
+    description: data.description,
+    url: `https://example.com/events/${entry.slug}`,
+    image: 'https://example.com/og-default.png',
+    publishedAt: data.startDate,
+  }),
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'イベント', item: 'https://example.com/events' },
+    { name: data.title, item: `https://example.com/events/${entry.slug}` },
+  ]),
+];
+---
+<BaseLayout
+  title={`${data.title}｜イベント詳細`}
+  description={data.description}
+  path={`/events/${entry.slug}`}
+  summary={`${data.startDate} 開催／${data.location}／参加費無料。Googleフォームから申し込み可能です。`}
+  breadcrumbs={[
+    { href: '/events', label: 'イベント' },
+    { href: `/events/${entry.slug}`, label: data.title },
+  ]}
+  structuredData={structuredData}
+>
+  <article class="section prose max-w-none prose-headings:text-slate-900 prose-p:text-slate-700">
+    <h1>{data.title}</h1>
+    <p class="text-sm text-slate-500">{data.startDate} @ {data.location}</p>
+    <p class="mt-4 leading-relaxed text-slate-700">{data.description}</p>
+    <div class="mt-6">
+      <Content />
+    </div>
+    {data.registrationUrl && (
+      <div class="mt-8">
+        <a
+          href={data.registrationUrl}
+          class="inline-flex items-center rounded-full bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700"
+        >
+          申し込みフォームを開く
+        </a>
+      </div>
+    )}
+  </article>
+</BaseLayout>

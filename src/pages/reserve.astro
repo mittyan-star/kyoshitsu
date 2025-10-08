@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../lib/schema';
+import { reserveEvents } from '../lib/analytics';
+
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: '体験予約', item: 'https://example.com/reserve' },
+  ]),
+];
+
+const formUrl = 'https://docs.google.com/forms/d/e/example/viewform?embedded=true';
+---
+<BaseLayout
+  title="体験予約｜3クリックで申し込み完了"
+  description="みっちゃん塾の体験授業予約フォーム。保護者・生徒の方はこちらから希望日時を選んでお申し込みください。"
+  path="/reserve"
+  summary="Googleフォームに遷移せず、このページ内で体験予約が完結します。LINE連携をご希望の場合は備考欄にご記入ください。"
+  breadcrumbs={[{ href: '/reserve', label: '体験予約' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">体験授業のお申し込み</h1>
+    <p>
+      体験授業は保護者同席も歓迎です。フォーム送信後、24時間以内に日程確定のご連絡を差し上げます。
+    </p>
+    <div class="mt-6">
+      <iframe
+        src={formUrl}
+        width="100%"
+        height="900"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        on:load={() => {
+          if (typeof window !== 'undefined') {
+            import('../lib/analytics').then(({ trackEvent }) => {
+              trackEvent(reserveEvents.view);
+            });
+          }
+        }}
+      >読み込んでいます…</iframe>
+    </div>
+  </section>
+</BaseLayout>

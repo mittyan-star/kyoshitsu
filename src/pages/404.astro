@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="ページが見つかりません"
+  description="指定されたページは削除されたか、URLが変更された可能性があります。"
+  path="/404"
+  summary="お探しのページは見つかりませんでした。トップページまたは体験予約ページをご確認ください。"
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">404 Not Found</h1>
+    <p class="mt-2 text-sm text-slate-600">
+      ページが見つかりません。URLを確認するか、<a class="text-blue-600" href="/">トップページ</a>に戻ってください。
+    </p>
+  </section>
+</BaseLayout>

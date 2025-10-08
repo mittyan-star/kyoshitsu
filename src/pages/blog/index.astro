@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const posts = await getCollection('blog');
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'ブログ', item: 'https://example.com/blog' },
+  ]),
+];
+---
+<BaseLayout
+  title="ブログ｜教育×AI・学習法・事例紹介"
+  description="みっちゃん塾のブログ一覧。教育×AI、学習法、探究事例、保護者へのヒントなどを定期的に更新します。"
+  path="/blog"
+  summary="毎週更新のブログで、生徒が説明する学びの実践例やAI活用のヒントをお届けします。"
+  breadcrumbs={[{ href: '/blog', label: 'ブログ' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">最新記事</h1>
+    <ul class="space-y-4">
+      {posts.map(({ slug, data }) => (
+        <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <a href={`/blog/${slug}`} class="text-lg font-semibold text-blue-700">{data.title}</a>
+          <p class="mt-1 text-sm text-slate-600">{data.description}</p>
+          <p class="mt-2 text-xs text-slate-500">公開日：{data.publishDate}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

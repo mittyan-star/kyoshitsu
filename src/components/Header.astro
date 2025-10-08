@@ -1,0 +1,25 @@
+---
+import CTAButton from './CTAButton.astro';
+
+const navItems = [
+  { href: '/', label: 'トップ' },
+  { href: '/method', label: '学習法' },
+  { href: '/courses', label: 'コース' },
+  { href: '/schedule', label: '時間割' },
+  { href: '/pricing', label: '料金' },
+  { href: '/events', label: 'イベント' },
+  { href: '/blog', label: 'ブログ' },
+  { href: '/faq', label: 'FAQ' },
+];
+---
+<header class="bg-white/80 backdrop-blur border-b border-slate-200">
+  <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+    <a href="/" class="text-xl font-bold text-blue-700">みっちゃん塾</a>
+    <nav class="hidden gap-6 text-sm font-semibold text-slate-600 md:flex">
+      {navItems.map((item) => (
+        <a href={item.href} class="hover:text-blue-600">{item.label}</a>
+      ))}
+    </nav>
+    <CTAButton href="/reserve" label="体験予約" />
+  </div>
+</header>
