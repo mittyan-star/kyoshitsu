@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTAButton from '../components/CTAButton.astro';
+import FAQAccordion from '../components/FAQAccordion.astro';
+import { organizationSchema, breadcrumbSchema } from '../lib/schema';
+import { getCollection } from 'astro:content';
+
+const blogEntries = await getCollection('blog', ({ data }) => !!data);
+const events = await getCollection('events', ({ data }) => !!data);
+
+const structuredData = [
+  organizationSchema({
+    name: 'みっちゃん塾',
+    url: 'https://example.com',
+    logo: 'https://example.com/favicon.svg',
+    sameAs: ['https://www.instagram.com/', 'https://line.me/'],
+  }),
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+  ]),
+];
+---
+<BaseLayout
+  title="みっちゃん塾｜生徒が説明する学びで思考力を伸ばす"
+  description="京都・宇治の個別指導×探究塾。生徒が説明する学びで説明力と思考力を育て、京大数学レベルまで届くプロセスを身につけます。"
+  path="/"
+  summary="生徒が説明する学び×ワンフレーズ報告×プレゼン教育で、思考力と発信力を一度に鍛える地域密着の学習コミュニティ。"
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">学びを社会につなぐ、宇治の学習コミュニティ</h1>
+    <p>
+      みっちゃん塾は、生徒が授業内容を先生や仲間に説明するスタイルで学びを深めます。ワンフレーズ報告や地域連携プロジェクトを通して、学力だけでなく伝える力・実行力を育てます。
+    </p>
+    <div class="cta-grid">
+      <CTAButton href="/reserve" label="体験予約（3クリックで完了）" />
+      <CTAButton href="https://line.me/R/ti/p/@example" label="LINEで相談" variant="secondary" />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>みっちゃん塾の特徴</h2>
+    <div class="cards">
+      <article class="rounded-xl bg-white p-6 shadow-sm">
+        <h3 class="text-xl font-semibold text-blue-700">生徒が説明する授業</h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+          解法を先生に説明することで、思考の筋道とアウトプット力を磨きます。先生は聞き役に徹し、問い返しで理解を深めます。
+        </p>
+      </article>
+      <article class="rounded-xl bg-white p-6 shadow-sm">
+        <h3 class="text-xl font-semibold text-blue-700">ワンフレーズ報告</h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+          授業後30秒の音声報告で「できたこと」「次にやること」を整理し、保護者へ即時共有します。家庭と塾の連携が密になります。
+        </p>
+      </article>
+      <article class="rounded-xl bg-white p-6 shadow-sm">
+        <h3 class="text-xl font-semibold text-blue-700">プレゼン×実社会課題</h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+          Cosmos Party や地域イベントで探究成果を発表。社会との接点を持ちながら、学びをアウトカムにつなげます。
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>最新記事</h2>
+    <ul class="space-y-4">
+      {blogEntries.slice(0, 3).map(({ slug, data }) => (
+        <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <a href={`/blog/${slug}`} class="text-lg font-semibold text-blue-700">{data.title}</a>
+          <p class="mt-1 text-sm text-slate-600">{data.description}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>開催予定のイベント</h2>
+    <ul class="space-y-4">
+      {events.slice(0, 2).map(({ slug, data }) => (
+        <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <a href={`/events/${slug}`} class="text-lg font-semibold text-blue-700">{data.title}</a>
+          <p class="mt-1 text-sm text-slate-600">{data.description}</p>
+          <p class="mt-2 text-xs text-slate-500">{data.startDate} @ {data.location}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <FAQAccordion
+    items={[
+      {
+        question: '体験授業は何を行いますか？',
+        answer: '通常授業と同じく、生徒が問題を解き方まで説明するプロセスを体験し、ワンフレーズ報告まで実践します。',
+      },
+      {
+        question: '入会までの流れを教えてください。',
+        answer: '体験予約→面談→初回オリエンテーション→学習計画確定の4ステップです。決済は入会後にご案内します。',
+      },
+      {
+        question: '振替や欠席対応は可能ですか？',
+        answer: '前日までのご連絡で振替対応いたします。オンライン接続の振替も柔軟に行っています。',
+      },
+    ]}
+  />
+</BaseLayout>

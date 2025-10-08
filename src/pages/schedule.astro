@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTAButton from '../components/CTAButton.astro';
+import { breadcrumbSchema } from '../lib/schema';
+
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: '時間割', item: 'https://example.com/schedule' },
+  ]),
+];
+
+const timetable = [
+  { day: '火・木', time: '17:00–21:30', note: '個別指導＋ワンフレーズ報告' },
+  { day: '土', time: '13:00–19:00', note: '探究プロジェクト＋プレゼン練習' },
+  { day: '日', time: '10:00–12:00', note: 'Cosmos Party準備・模擬発表（隔週）' },
+];
+---
+<BaseLayout
+  title="時間割・カレンダー｜通塾スケジュールとイベント"
+  description="みっちゃん塾の開講曜日と時間割。個別指導の曜日、探究プロジェクト、Cosmos Partyなどのイベントスケジュールを掲載。"
+  path="/schedule"
+  summary="平日は個別指導とワンフレーズ報告、週末は探究とプレゼン練習。Cosmos Partyなど地域イベントは隔月開催。"
+  breadcrumbs={[{ href: '/schedule', label: '時間割/カレンダー' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">通塾スケジュール</h1>
+    <table class="table mt-6">
+      <thead>
+        <tr>
+          <th>曜日</th>
+          <th>時間</th>
+          <th>内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        {timetable.map((row) => (
+          <tr>
+            <td class="font-semibold">{row.day}</td>
+            <td>{row.time}</td>
+            <td>{row.note}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2>カレンダー</h2>
+    <p>
+      Googleカレンダーで通塾日とイベントを共有しています。保護者様には専用URLをお渡しし、スマートフォンで即時確認いただけます。
+    </p>
+    <div class="mt-4">
+      <iframe
+        src="https://calendar.google.com/calendar/embed?src=example%40gmail.com&ctz=Asia%2FTokyo"
+        style="border:0"
+        width="100%"
+        height="500"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+    <div class="mt-6">
+      <CTAButton href="/reserve" label="体験日程を確認する" />
+    </div>
+  </section>
+</BaseLayout>

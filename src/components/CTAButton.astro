@@ -1,0 +1,17 @@
+---
+const { href, label, variant = 'primary' } = Astro.props as {
+  href: string;
+  label: string;
+  variant?: 'primary' | 'secondary';
+};
+---
+<a
+  href={href}
+  class={`inline-flex items-center justify-center rounded-full px-5 py-3 font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+    variant === 'primary'
+      ? 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:outline-blue-600'
+      : 'bg-white text-blue-700 ring-1 ring-inset ring-blue-200 hover:bg-blue-50 focus-visible:outline-blue-700'
+  }`}
+>
+  {label}
+</a>

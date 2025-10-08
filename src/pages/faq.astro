@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FAQAccordion from '../components/FAQAccordion.astro';
+import { breadcrumbSchema } from '../lib/schema';
+
+const faqItems = [
+  {
+    question: '入会までの手順は？',
+    answer: '体験予約→面談→初回オリエンテーション→入会手続きの順です。決済は入会後のご案内となります。',
+  },
+  {
+    question: '宿題はありますか？',
+    answer: '各コースごとに「説明する宿題」を設定します。保護者と共有できるチェックリストもお渡しします。',
+  },
+  {
+    question: 'オンライン参加は可能ですか？',
+    answer: '探究発表や欠席時の振替はオンライン接続で対応可能です。ワンフレーズ報告もオンライン提出いただけます。',
+  },
+];
+
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  },
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'FAQ', item: 'https://example.com/faq' },
+  ]),
+];
+---
+<BaseLayout
+  title="よくある質問｜入会手順・振替・持ち物"
+  description="みっちゃん塾のFAQ。入会手順、宿題の有無、オンライン対応、持ち物、振替ルールなどを掲載しています。"
+  path="/faq"
+  summary="入会手順、宿題の考え方、振替ルール、オンライン対応など、保護者から寄せられる質問にまとめてお答えします。"
+  breadcrumbs={[{ href: '/faq', label: 'よくある質問' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">よくある質問</h1>
+    <FAQAccordion items={faqItems} />
+  </section>
+</BaseLayout>

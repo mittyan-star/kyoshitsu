@@ -1,0 +1,35 @@
+python - <<'PY'
+from PIL import Image, ImageDraw, ImageFont
+img = Image.new('RGB', (1200, 630), '#1d4ed8')
+draw = ImageDraw.Draw(img)
+text = 'Mittyan Learning Lab'
+subtitle = '生徒が説明する学び'
+font = ImageFont.load_default()
+text_w, text_h = draw.textsize(text, font=font)
+sub_w, sub_h = draw.textsize(subtitle, font=font)
+draw.text(((1200 - text_w) / 2, 630/2 - 20), text, fill='#fefce8', font=font)
+draw.text(((1200 - sub_w) / 2, 630/2 + 10), subtitle, fill='#fefce8', font=font)
+img.save('public/og-default.png')
+PY
+cat <<'EOF' > src/lib/analytics.ts
+export const GA_ID = 'G-XXXXXXXXXX';
+
+export const analyticsScript = () => `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${GA_ID}', { transport_type: 'beacon' });
+`;
+
+export const trackEvent = (eventName: string, params: Record<string, unknown> = {}) => {
+  if (typeof window === 'undefined' || !(window as any).gtag) return;
+  (window as any).gtag('event', eventName, params);
+};
+
+export const reserveEvents = {
+  view: 'view_reserve',
+  submit: 'submit_reserve',
+  clickLine: 'click_line',
+  viewFaq: 'view_faq',
+  qrEntry: 'qr_entry',
+} as const;

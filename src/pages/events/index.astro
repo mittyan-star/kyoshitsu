@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const events = await getCollection('events');
+const structuredData = [
+  breadcrumbSchema([
+    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'イベント', item: 'https://example.com/events' },
+  ]),
+];
+---
+<BaseLayout
+  title="イベント一覧｜Cosmos Party・体験会・地域連携"
+  description="Cosmos Partyや体験会、地域連携イベントの予定一覧。みっちゃん塾の最新イベント情報を掲載します。"
+  path="/events"
+  summary="Cosmos Party・探究発表・地域コラボイベントの最新スケジュールをこちらで随時更新します。"
+  breadcrumbs={[{ href: '/events', label: 'イベント' }]}
+  structuredData={structuredData}
+>
+  <section class="section">
+    <h1 class="text-3xl font-bold text-slate-900">開催予定イベント</h1>
+    <ul class="space-y-4">
+      {events.map(({ slug, data }) => (
+        <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <a href={`/events/${slug}`} class="text-lg font-semibold text-blue-700">{data.title}</a>
+          <p class="mt-1 text-sm text-slate-600">{data.description}</p>
+          <p class="mt-2 text-xs text-slate-500">{data.startDate} @ {data.location}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
