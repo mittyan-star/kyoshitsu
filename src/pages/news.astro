@@ -1,6 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import NoteFeed from '../components/NoteFeed.astro';
 import { breadcrumbSchema } from '../lib/schema';
+import Parser from 'rss-parser';
+
+const NOTE_FEED_URL = 'https://note.com/mittyan_star/rss';
+const NOTE_FEED_LIMIT = 10;
+
+const parser = new Parser();
+
+let noteItems = [];
+try {
+  const feed = await parser.parseURL(NOTE_FEED_URL);
+  noteItems = (feed.items ?? []).slice(0, NOTE_FEED_LIMIT);
+} catch (error) {
+  console.error('noteフィードの取得に失敗しました', error);
+}
 
 const newsItems = [
   { date: '2024-02-10', title: '春の体験ウィーク受付開始', detail: '3/1〜3/10は毎日体験授業を実施します。予約フォームからご希望日時を選択ください。' },
@@ -35,6 +50,23 @@ const structuredData = [
       },
     })),
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'note更新情報',
+    itemListElement: noteItems.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.title,
+      url: item.link ?? NOTE_FEED_URL,
+      item: {
+        '@type': 'NewsArticle',
+        headline: item.title,
+        datePublished: item.isoDate,
+        description: item.contentSnippet,
+      },
+    })),
+  },
 ];
 ---
 <BaseLayout
@@ -47,19 +79,33 @@ const structuredData = [
 >
   <section class="section">
     <h1 class="text-3xl font-bold text-slate-900">最新のお知らせ</h1>
-    <ul class="space-y-4">
-      {sortedNews.map((item) => (
-        <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <p class="text-xs text-slate-500">{item.date}</p>
-          <h2 class="text-lg font-semibold text-blue-700">{item.title}</h2>
-          <p class="mt-2 text-sm text-slate-600">{item.detail}</p>
-        </li>
-      ))}
-      {sortedNews.length === 0 && (
-        <li class="rounded-lg border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-500">
-          現在お知らせはありません。LINEに登録いただくと最新情報をいち早くお届けします。
-        </li>
-      )}
-    </ul>
+    <div class="mt-8 space-y-8">
+      <section>
+        <h2 class="text-xl font-semibold text-slate-900">note更新情報</h2>
+        <NoteFeed
+          items={noteItems}
+          feedUrl={NOTE_FEED_URL}
+          limit={NOTE_FEED_LIMIT}
+          emptyMessage="現在、noteでのお知らせはありません。"
+        />
+      </section>
+      <section>
+        <h2 class="text-xl font-semibold text-slate-900">教室からのお知らせ</h2>
+        <ul class="space-y-4">
+          {sortedNews.map((item) => (
+            <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <p class="text-xs text-slate-500">{item.date}</p>
+              <h2 class="text-lg font-semibold text-blue-700">{item.title}</h2>
+              <p class="mt-2 text-sm text-slate-600">{item.detail}</p>
+            </li>
+          ))}
+          {sortedNews.length === 0 && (
+            <li class="rounded-lg border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-500">
+              現在お知らせはありません。LINEに登録いただくと最新情報をいち早くお届けします。
+            </li>
+          )}
+        </ul>
+      </section>
+    </div>
   </section>
 </BaseLayout>
