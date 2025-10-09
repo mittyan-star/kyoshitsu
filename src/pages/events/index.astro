@@ -30,8 +30,8 @@ const pastEvents = sortedEvents.filter(({ data }) => {
 
 const structuredData = [
   breadcrumbSchema([
-    { name: 'ホーム', item: 'https://example.com/' },
-    { name: 'イベント', item: 'https://example.com/events' },
+    { name: 'ホーム', item: 'https://mittyan-star.github.io/kyoshitsu/' },
+    { name: 'イベント', item: 'https://mittyan-star.github.io/kyoshitsu/events' },
   ]),
   {
     '@context': 'https://schema.org',
@@ -40,7 +40,7 @@ const structuredData = [
     itemListElement: sortedEvents.map((entry, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: `https://example.com/events/${entry.slug}`,
+      url: `https://mittyan-star.github.io/kyoshitsu/events/${entry.slug}`,
       name: entry.data.title,
     })),
   },
