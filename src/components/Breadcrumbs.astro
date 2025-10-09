@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../lib/url';
+
 const { items = [] } = Astro.props as {
   items?: { href: string; label: string }[];
 };
@@ -7,7 +9,7 @@ const { items = [] } = Astro.props as {
   <nav aria-label="パンくず" class="mb-6 text-sm text-slate-500">
     <ol class="flex flex-wrap gap-1">
       <li>
-        <a href="/" class="hover:text-blue-600">ホーム</a>
+        <a href={withBase('/')} class="hover:text-blue-600">ホーム</a>
         <span aria-hidden="true"> / </span>
       </li>
       {items.map((item, index) => (
@@ -16,7 +18,7 @@ const { items = [] } = Astro.props as {
             <span class="text-slate-700">{item.label}</span>
           ) : (
             <>
-              <a href={item.href} class="hover:text-blue-600">{item.label}</a>
+              <a href={withBase(item.href)} class="hover:text-blue-600">{item.label}</a>
               <span aria-hidden="true"> / </span>
             </>
           )}

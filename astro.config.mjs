@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://mittyan-star.github.io/kyoshitsu/',
+  base: '/kyoshitsu/',
   integrations: [mdx(), sitemap()],
   vite: {
     plugins: [tailwind()],
