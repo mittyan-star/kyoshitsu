@@ -19,14 +19,14 @@ const structuredData = [
   articleSchema({
     title: data.title,
     description: data.description,
-    url: `https://example.com/blog/${entry.slug}`,
-    image: data.heroImage ?? 'https://example.com/og-default.png',
+    url: `https://mittyan-star.github.io/kyoshitsu/blog/${entry.slug}`,
+    image: data.heroImage ?? 'https://mittyan-star.github.io/kyoshitsu/og-default.png',
     publishedAt: data.publishDate,
   }),
   breadcrumbSchema([
-    { name: 'ホーム', item: 'https://example.com/' },
-    { name: 'ブログ', item: 'https://example.com/blog' },
-    { name: data.title, item: `https://example.com/blog/${entry.slug}` },
+    { name: 'ホーム', item: 'https://mittyan-star.github.io/kyoshitsu/' },
+    { name: 'ブログ', item: 'https://mittyan-star.github.io/kyoshitsu/blog' },
+    { name: data.title, item: `https://mittyan-star.github.io/kyoshitsu/blog/${entry.slug}` },
   ]),
 ];
 ---

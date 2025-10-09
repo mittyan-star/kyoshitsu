@@ -15,8 +15,8 @@ const sortedNews = [...newsItems].sort((a, b) => {
 
 const structuredData = [
   breadcrumbSchema([
-    { name: 'ホーム', item: 'https://example.com/' },
-    { name: 'お知らせ', item: 'https://example.com/news' },
+    { name: 'ホーム', item: 'https://mittyan-star.github.io/kyoshitsu/' },
+    { name: 'お知らせ', item: 'https://mittyan-star.github.io/kyoshitsu/news' },
   ]),
   {
     '@context': 'https://schema.org',
@@ -26,7 +26,7 @@ const structuredData = [
       '@type': 'ListItem',
       position: index + 1,
       name: item.title,
-      url: 'https://example.com/news',
+      url: 'https://mittyan-star.github.io/kyoshitsu/news',
       item: {
         '@type': 'NewsArticle',
         headline: item.title,

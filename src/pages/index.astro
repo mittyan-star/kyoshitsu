@@ -37,12 +37,12 @@ const featuredPosts = sortedBlogEntries.slice(0, 3);
 const structuredData = [
   organizationSchema({
     name: 'みっちゃん塾',
-    url: 'https://example.com',
-    logo: 'https://example.com/favicon.svg',
+    url: 'https://mittyan-star.github.io/kyoshitsu',
+    logo: 'https://mittyan-star.github.io/kyoshitsu/favicon.svg',
     sameAs: ['https://www.instagram.com/', 'https://line.me/'],
   }),
   breadcrumbSchema([
-    { name: 'ホーム', item: 'https://example.com/' },
+    { name: 'ホーム', item: 'https://mittyan-star.github.io/kyoshitsu/' },
   ]),
   {
     '@context': 'https://schema.org',
@@ -51,7 +51,7 @@ const structuredData = [
     itemListElement: featuredPosts.map((entry, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: `https://example.com/blog/${entry.slug}`,
+      url: `https://mittyan-star.github.io/kyoshitsu/blog/${entry.slug}`,
       name: entry.data.title,
     })),
   },
@@ -62,7 +62,7 @@ const structuredData = [
     itemListElement: highlightedEvents.map((entry, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: `https://example.com/events/${entry.slug}`,
+      url: `https://mittyan-star.github.io/kyoshitsu/events/${entry.slug}`,
       name: entry.data.title,
     })),
   },

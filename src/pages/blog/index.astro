@@ -14,21 +14,21 @@ const sortedPosts = [...posts].sort((a, b) => {
 
 const structuredData = [
   breadcrumbSchema([
-    { name: 'ホーム', item: 'https://example.com/' },
-    { name: 'ブログ', item: 'https://example.com/blog' },
+    { name: 'ホーム', item: 'https://mittyan-star.github.io/kyoshitsu/' },
+    { name: 'ブログ', item: 'https://mittyan-star.github.io/kyoshitsu/blog' },
   ]),
   {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'みっちゃん塾ブログ',
     description: '教育×AI、探究事例、学習法を紹介するブログ記事一覧。',
-    url: 'https://example.com/blog',
+    url: 'https://mittyan-star.github.io/kyoshitsu/blog',
     blogPost: sortedPosts.map((entry) => ({
       '@type': 'BlogPosting',
       headline: entry.data.title,
       description: entry.data.description,
       datePublished: entry.data.publishDate,
-      url: `https://example.com/blog/${entry.slug}`,
+      url: `https://mittyan-star.github.io/kyoshitsu/blog/${entry.slug}`,
     })),
   },
 ];
