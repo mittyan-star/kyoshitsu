@@ -7,11 +7,34 @@ const newsItems = [
   { date: '2024-01-20', title: 'Cosmos Party参加者募集', detail: '3/20開催のCosmos Partyでは地域の大人との交流タイムを拡充します。' },
 ];
 
+const sortedNews = [...newsItems].sort((a, b) => {
+  const aDate = new Date(a.date).getTime();
+  const bDate = new Date(b.date).getTime();
+  return bDate - aDate;
+});
+
 const structuredData = [
   breadcrumbSchema([
     { name: 'ホーム', item: 'https://example.com/' },
     { name: 'お知らせ', item: 'https://example.com/news' },
   ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '最新のお知らせ',
+    itemListElement: sortedNews.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.title,
+      url: 'https://example.com/news',
+      item: {
+        '@type': 'NewsArticle',
+        headline: item.title,
+        datePublished: item.date,
+        description: item.detail,
+      },
+    })),
+  },
 ];
 ---
 <BaseLayout
@@ -25,13 +48,18 @@ const structuredData = [
   <section class="section">
     <h1 class="text-3xl font-bold text-slate-900">最新のお知らせ</h1>
     <ul class="space-y-4">
-      {newsItems.map((item) => (
+      {sortedNews.map((item) => (
         <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <p class="text-xs text-slate-500">{item.date}</p>
           <h2 class="text-lg font-semibold text-blue-700">{item.title}</h2>
           <p class="mt-2 text-sm text-slate-600">{item.detail}</p>
         </li>
       ))}
+      {sortedNews.length === 0 && (
+        <li class="rounded-lg border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-500">
+          現在お知らせはありません。LINEに登録いただくと最新情報をいち早くお届けします。
+        </li>
+      )}
     </ul>
   </section>
 </BaseLayout>

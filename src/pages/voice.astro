@@ -24,6 +24,24 @@ const structuredData = [
     { name: 'ホーム', item: 'https://example.com/' },
     { name: '保護者・生徒の声', item: 'https://example.com/voice' },
   ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '保護者・生徒の声',
+    itemListElement: voices.map((voice, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: voice.name,
+      item: {
+        '@type': 'Review',
+        reviewBody: voice.comment,
+        author: {
+          '@type': 'Person',
+          name: voice.name,
+        },
+      },
+    })),
+  },
 ];
 ---
 <BaseLayout

@@ -4,11 +4,32 @@ import { getCollection } from 'astro:content';
 import { breadcrumbSchema } from '../../lib/schema';
 
 const posts = await getCollection('blog');
+
+const sortedPosts = [...posts].sort((a, b) => {
+  const aDate = a.data.publishDate ? new Date(a.data.publishDate).getTime() : 0;
+  const bDate = b.data.publishDate ? new Date(b.data.publishDate).getTime() : 0;
+  return bDate - aDate;
+});
+
 const structuredData = [
   breadcrumbSchema([
     { name: 'ホーム', item: 'https://example.com/' },
     { name: 'ブログ', item: 'https://example.com/blog' },
   ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'みっちゃん塾ブログ',
+    description: '教育×AI、探究事例、学習法を紹介するブログ記事一覧。',
+    url: 'https://example.com/blog',
+    blogPost: sortedPosts.map((entry) => ({
+      '@type': 'BlogPosting',
+      headline: entry.data.title,
+      description: entry.data.description,
+      datePublished: entry.data.publishDate,
+      url: `https://example.com/blog/${entry.slug}`,
+    })),
+  },
 ];
 ---
 <BaseLayout
@@ -22,13 +43,18 @@ const structuredData = [
   <section class="section">
     <h1 class="text-3xl font-bold text-slate-900">最新記事</h1>
     <ul class="space-y-4">
-      {posts.map(({ slug, data }) => (
+      {sortedPosts.map(({ slug, data }) => (
         <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <a href={`/blog/${slug}`} class="text-lg font-semibold text-blue-700">{data.title}</a>
           <p class="mt-1 text-sm text-slate-600">{data.description}</p>
           <p class="mt-2 text-xs text-slate-500">公開日：{data.publishDate}</p>
         </li>
       ))}
+      {sortedPosts.length === 0 && (
+        <li class="rounded-lg border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-500">
+          公開済みの記事はまだありません。近日中に更新いたします。
+        </li>
+      )}
     </ul>
   </section>
 </BaseLayout>
