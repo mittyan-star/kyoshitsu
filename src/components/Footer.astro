@@ -1,5 +1,6 @@
 ---
 import CTAButton from './CTAButton.astro';
+import { withBase } from '../lib/url';
 ---
 <footer class="border-t border-slate-200 bg-slate-900 text-slate-100">
   <div class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-10 md:flex-row md:items-start md:justify-between">
@@ -17,18 +18,18 @@ import CTAButton from './CTAButton.astro';
       <div>
         <p class="font-semibold text-slate-100">ページ</p>
         <ul class="mt-2 space-y-1">
-          <li><a href="/about">塾概要</a></li>
-          <li><a href="/voice">保護者・生徒の声</a></li>
-          <li><a href="/events">イベント</a></li>
-          <li><a href="/blog">ブログ</a></li>
+          <li><a href={withBase('/about')}>塾概要</a></li>
+          <li><a href={withBase('/voice')}>保護者・生徒の声</a></li>
+          <li><a href={withBase('/events')}>イベント</a></li>
+          <li><a href={withBase('/blog')}>ブログ</a></li>
         </ul>
       </div>
       <div>
         <p class="font-semibold text-slate-100">運営</p>
         <ul class="mt-2 space-y-1">
-          <li><a href="/contact">お問い合わせ</a></li>
-          <li><a href="/policy">ポリシー</a></li>
-          <li><a href="/links">SNSリンク集</a></li>
+          <li><a href={withBase('/contact')}>お問い合わせ</a></li>
+          <li><a href={withBase('/policy')}>ポリシー</a></li>
+          <li><a href={withBase('/links')}>SNSリンク集</a></li>
         </ul>
       </div>
     </div>

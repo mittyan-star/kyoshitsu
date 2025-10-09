@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { analyticsScript, GA_ID } from '../lib/analytics';
+import { withBase } from '../lib/url';
 
 interface BreadcrumbItem {
   href: string;
@@ -27,13 +28,16 @@ const {
 };
 
 const site = Astro.site ?? new URL('https://example.com');
-const canonical = new URL(path, site).href;
+const normalizedPath = path === '/' ? '.' : path.startsWith('/') ? path.slice(1) : path;
+const canonical = new URL(normalizedPath, site).href;
+const faviconHref = withBase('/favicon.svg');
+const ogImagePath = new URL(withBase('/og-default.png'), site).href;
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={faviconHref} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -41,7 +45,7 @@ const canonical = new URL(path, site).href;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={`${site.origin}/og-default.png`} />
+    <meta property="og:image" content={ogImagePath} />
     <meta name="twitter:card" content="summary_large_image" />
     <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
     <script is:inline set:html={analyticsScript()}></script>

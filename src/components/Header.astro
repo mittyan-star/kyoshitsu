@@ -1,5 +1,6 @@
 ---
 import CTAButton from './CTAButton.astro';
+import { withBase } from '../lib/url';
 
 const navItems = [
   { href: '/', label: 'トップ' },
@@ -14,10 +15,10 @@ const navItems = [
 ---
 <header class="bg-white/80 backdrop-blur border-b border-slate-200">
   <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-    <a href="/" class="text-xl font-bold text-blue-700">みっちゃん塾</a>
+    <a href={withBase('/')} class="text-xl font-bold text-blue-700">みっちゃん塾</a>
     <nav class="hidden gap-6 text-sm font-semibold text-slate-600 md:flex">
       {navItems.map((item) => (
-        <a href={item.href} class="hover:text-blue-600">{item.label}</a>
+        <a href={withBase(item.href)} class="hover:text-blue-600">{item.label}</a>
       ))}
     </nav>
     <CTAButton href="/reserve" label="体験予約" />
