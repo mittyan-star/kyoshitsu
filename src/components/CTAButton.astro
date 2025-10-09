@@ -1,12 +1,16 @@
 ---
+import { withBase } from '../lib/url';
+
 const { href, label, variant = 'primary' } = Astro.props as {
   href: string;
   label: string;
   variant?: 'primary' | 'secondary';
 };
+
+const resolvedHref = withBase(href);
 ---
 <a
-  href={href}
+  href={resolvedHref}
   class={`inline-flex items-center justify-center rounded-full px-5 py-3 font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
     variant === 'primary'
       ? 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:outline-blue-600'
