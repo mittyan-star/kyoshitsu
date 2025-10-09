@@ -8,6 +8,31 @@ import { getCollection } from 'astro:content';
 const blogEntries = await getCollection('blog', ({ data }) => !!data);
 const events = await getCollection('events', ({ data }) => !!data);
 
+const toDate = (value?: string) => (value ? new Date(value) : undefined);
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const sortedBlogEntries = [...blogEntries].sort((a, b) => {
+  const aDate = toDate(a.data.publishDate)?.getTime() ?? 0;
+  const bDate = toDate(b.data.publishDate)?.getTime() ?? 0;
+  return bDate - aDate;
+});
+
+const sortedEvents = [...events].sort((a, b) => {
+  const aDate = toDate(a.data.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+  const bDate = toDate(b.data.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+  return aDate - bDate;
+});
+
+const upcomingEvents = sortedEvents.filter(({ data }) => {
+  const start = toDate(data.startDate);
+  if (!start) return true;
+  return start.getTime() >= today.getTime();
+});
+
+const highlightedEvents = (upcomingEvents.length > 0 ? upcomingEvents : sortedEvents).slice(0, 2);
+const featuredPosts = sortedBlogEntries.slice(0, 3);
+
 const structuredData = [
   organizationSchema({
     name: 'みっちゃん塾',
@@ -18,6 +43,28 @@ const structuredData = [
   breadcrumbSchema([
     { name: 'ホーム', item: 'https://example.com/' },
   ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '最新ブログ記事',
+    itemListElement: featuredPosts.map((entry, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `https://example.com/blog/${entry.slug}`,
+      name: entry.data.title,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '開催予定のイベント',
+    itemListElement: highlightedEvents.map((entry, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `https://example.com/events/${entry.slug}`,
+      name: entry.data.title,
+    })),
+  },
 ];
 ---
 <BaseLayout
@@ -65,7 +112,7 @@ const structuredData = [
   <section class="section">
     <h2>最新記事</h2>
     <ul class="space-y-4">
-      {blogEntries.slice(0, 3).map(({ slug, data }) => (
+      {featuredPosts.map(({ slug, data }) => (
         <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <a href={`/blog/${slug}`} class="text-lg font-semibold text-blue-700">{data.title}</a>
           <p class="mt-1 text-sm text-slate-600">{data.description}</p>
@@ -77,13 +124,18 @@ const structuredData = [
   <section class="section">
     <h2>開催予定のイベント</h2>
     <ul class="space-y-4">
-      {events.slice(0, 2).map(({ slug, data }) => (
+      {highlightedEvents.map(({ slug, data }) => (
         <li class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <a href={`/events/${slug}`} class="text-lg font-semibold text-blue-700">{data.title}</a>
           <p class="mt-1 text-sm text-slate-600">{data.description}</p>
           <p class="mt-2 text-xs text-slate-500">{data.startDate} @ {data.location}</p>
         </li>
       ))}
+      {highlightedEvents.length === 0 && (
+        <li class="rounded-lg border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-500">
+          現在予定されているイベントはありません。近日中に更新します。
+        </li>
+      )}
     </ul>
   </section>
 

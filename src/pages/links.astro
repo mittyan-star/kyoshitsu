@@ -3,17 +3,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CTAButton from '../components/CTAButton.astro';
 import { breadcrumbSchema } from '../lib/schema';
 
+const links = [
+  { label: 'LINE公式アカウント', href: 'https://line.me/R/ti/p/@example', description: '体験予約や日程調整はこちらから。' },
+  { label: 'Instagram', href: 'https://www.instagram.com/', description: 'Cosmos Partyや授業の様子を更新。' },
+  { label: 'YouTube', href: 'https://www.youtube.com/', description: 'ワンフレーズ報告や探究発表のダイジェストを公開。' },
+];
+
 const structuredData = [
   breadcrumbSchema([
     { name: 'ホーム', item: 'https://example.com/' },
     { name: 'リンク集', item: 'https://example.com/links' },
   ]),
-];
-
-const links = [
-  { label: 'LINE公式アカウント', href: 'https://line.me/R/ti/p/@example', description: '体験予約や日程調整はこちらから。' },
-  { label: 'Instagram', href: 'https://www.instagram.com/', description: 'Cosmos Partyや授業の様子を更新。' },
-  { label: 'YouTube', href: 'https://www.youtube.com/', description: 'ワンフレーズ報告や探究発表のダイジェストを公開。' },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '公式リンク集',
+    itemListElement: links.map((link, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: link.label,
+      url: link.href,
+      description: link.description,
+    })),
+  },
 ];
 ---
 <BaseLayout
