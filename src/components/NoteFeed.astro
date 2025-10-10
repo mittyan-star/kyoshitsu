@@ -1,0 +1,79 @@
+---
+import { fetchNoteFeed, type NoteFeedItem } from '../lib/noteFeed';
+
+export interface Props {
+  feedUrl?: string;
+  limit?: number;
+  items?: NoteFeedItem[];
+  emptyMessage?: string;
+  snippetLength?: number;
+}
+
+const {
+  feedUrl,
+  limit = 10,
+  items: initialItems,
+  emptyMessage = '現在、noteの記事はまだありません。',
+  snippetLength,
+} = Astro.props;
+const className = Astro.props.class ?? '';
+
+let items: NoteFeedItem[] = Array.isArray(initialItems) ? [...initialItems] : [];
+let hasError = false;
+
+if (items.length === 0 && feedUrl) {
+  try {
+    items = await fetchNoteFeed(feedUrl, limit);
+  } catch (error) {
+    hasError = true;
+    console.error('noteフィードの取得に失敗しました', error);
+  }
+}
+
+const formatSnippet = (snippet?: string | null) => {
+  if (!snippet) return undefined;
+  const normalized = snippet.trim();
+  if (!snippetLength || snippetLength <= 0 || normalized.length <= snippetLength) {
+    return normalized;
+  }
+  return `${normalized.slice(0, snippetLength)}…`;
+};
+
+const limitedItems = items.slice(0, limit).map((item) => ({
+  ...item,
+  contentSnippet: formatSnippet(item.contentSnippet),
+}));
+const listClass = ['space-y-4', className].filter(Boolean).join(' ');
+---
+{hasError ? (
+  <p class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+    noteの記事を読み込めませんでした。時間を置いて再度お試しください。
+  </p>
+) : limitedItems.length === 0 ? (
+  <p class="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-500">
+    {emptyMessage}
+  </p>
+) : (
+  <ul class={listClass}>
+    {limitedItems.map((item) => (
+      <li class="border-b pb-4 last:border-b-0">
+        <a
+          href={item.link ?? '#'}
+          class="font-medium text-blue-700 hover:underline"
+          target="_blank"
+          rel="noopener"
+        >
+          {item.title ?? 'タイトル未設定'}
+        </a>
+        {item.isoDate && (
+          <div class="text-sm text-gray-500">
+            <time datetime={new Date(item.isoDate).toISOString()}>
+              {new Date(item.isoDate).toLocaleDateString('ja-JP')}
+            </time>
+          </div>
+        )}
+        {item.contentSnippet && <p class="mt-1 text-sm text-slate-600">{item.contentSnippet}</p>}
+      </li>
+    ))}
+  </ul>
+)}
