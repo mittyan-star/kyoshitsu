@@ -5,6 +5,7 @@ export interface NoteFeedItem {
   link?: string;
   isoDate?: string;
   contentSnippet?: string;
+  thumbnailUrl?: string;
 }
 
 interface RawNoteFeedItem extends Parser.Item {
@@ -20,6 +21,8 @@ interface RawNoteFeedItem extends Parser.Item {
   contentSnippet?: string | null;
   'content:encoded'?: string | null;
   'dc:date'?: string | null;
+  'media:thumbnail'?: unknown;
+  'media:content'?: unknown;
   [key: string]: unknown;
 }
 
@@ -63,6 +66,58 @@ const sanitizeValue = (value?: string | null): string | undefined => {
 };
 
 const buildContentSnippet = (raw?: string | null): string | undefined => sanitizeValue(raw);
+
+const extractThumbnailUrl = (value: unknown): string | undefined => {
+  const trySanitize = (raw?: string | null) => {
+    if (typeof raw !== 'string') return undefined;
+    const sanitized = sanitizeValue(raw);
+    if (!sanitized) return undefined;
+    return /^https?:\/\//i.test(sanitized) ? sanitized : undefined;
+  };
+
+  const traverse = (node: unknown, visited = new Set<unknown>()): string | undefined => {
+    if (!node || visited.has(node)) {
+      return undefined;
+    }
+    visited.add(node);
+
+    if (typeof node === 'string') {
+      return trySanitize(node);
+    }
+
+    if (Array.isArray(node)) {
+      for (const entry of node) {
+        const result = traverse(entry, visited);
+        if (result) return result;
+      }
+      return undefined;
+    }
+
+    if (typeof node === 'object') {
+      const record = node as Record<string, unknown>;
+
+      const directUrl = trySanitize(record.url as string | undefined);
+      if (directUrl) return directUrl;
+
+      const hrefUrl = trySanitize(record.href as string | undefined);
+      if (hrefUrl) return hrefUrl;
+
+      if (record.$ && typeof record.$ === 'object') {
+        const nested = traverse(record.$, visited);
+        if (nested) return nested;
+      }
+
+      for (const value of Object.values(record)) {
+        const result = traverse(value, visited);
+        if (result) return result;
+      }
+    }
+
+    return undefined;
+  };
+
+  return traverse(value);
+};
 
 const pickFirstSanitizedValue = (
   item: RawNoteFeedItem,
@@ -124,12 +179,15 @@ export async function fetchNoteFeed(feedUrl: string, limit?: number): Promise<No
     );
     const isoDate =
       pickFirstDateValue(entry, ['isoDate', 'pubDate', 'dc:date', 'updated']) ?? undefined;
+    const thumbnailUrl =
+      extractThumbnailUrl(entry['media:thumbnail']) ?? extractThumbnailUrl(entry['media:content']);
 
     items.push({
       title,
       link,
       isoDate,
       contentSnippet,
+      thumbnailUrl,
     });
 
     if (limit && items.length >= limit) {

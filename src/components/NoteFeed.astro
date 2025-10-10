@@ -56,23 +56,35 @@ const listClass = ['space-y-4', className].filter(Boolean).join(' ');
 ) : (
   <ul class={listClass}>
     {limitedItems.map((item) => (
-      <li class="border-b pb-4 last:border-b-0">
-        <a
-          href={item.link ?? '#'}
-          class="font-medium text-blue-700 hover:underline"
-          target="_blank"
-          rel="noopener"
-        >
-          {item.title ?? 'タイトル未設定'}
-        </a>
-        {item.isoDate && (
-          <div class="text-sm text-gray-500">
-            <time datetime={new Date(item.isoDate).toISOString()}>
-              {new Date(item.isoDate).toLocaleDateString('ja-JP')}
-            </time>
-          </div>
-        )}
-        {item.contentSnippet && <p class="mt-1 text-sm text-slate-600">{item.contentSnippet}</p>}
+      <li class="flex items-start gap-4 border-b pb-4 last:border-b-0">
+        <div class="flex-1">
+          <a
+            href={item.link ?? '#'}
+            class="font-medium text-blue-700 hover:underline"
+            target="_blank"
+            rel="noopener"
+          >
+            {item.title ?? 'タイトル未設定'}
+          </a>
+          {item.isoDate && (
+            <div class="text-sm text-gray-500">
+              <time datetime={new Date(item.isoDate).toISOString()}>
+                {new Date(item.isoDate).toLocaleDateString('ja-JP')}
+              </time>
+            </div>
+          )}
+          {item.contentSnippet && <p class="mt-1 text-sm text-slate-600">{item.contentSnippet}</p>}
+        </div>
+        <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-slate-200 bg-white">
+          <img
+            src={item.thumbnailUrl ?? '/note-logo.svg'}
+            alt={item.title ? `${item.title}のサムネイル` : 'note記事のサムネイル'}
+            width="64"
+            height="64"
+            class="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
       </li>
     ))}
   </ul>
