@@ -1,3 +1,5 @@
+import Parser from 'rss-parser';
+
 export interface NoteFeedItem {
   title?: string;
   link?: string;
@@ -5,7 +7,23 @@ export interface NoteFeedItem {
   contentSnippet?: string;
 }
 
-const ITEM_PATTERN = /<item[\s\S]*?<\/item>/gi;
+interface RawNoteFeedItem extends Parser.Item {
+  title?: string | null;
+  link?: string | null;
+  guid?: string | null;
+  isoDate?: string | null;
+  pubDate?: string | null;
+  updated?: string | null;
+  summary?: string | null;
+  content?: string | null;
+  description?: string | null;
+  contentSnippet?: string | null;
+  'content:encoded'?: string | null;
+  'dc:date'?: string | null;
+  [key: string]: unknown;
+}
+
+const parser = new Parser<unknown, RawNoteFeedItem>();
 
 const HTML_ENTITIES: Record<string, string> = {
   amp: '&',
@@ -44,25 +62,42 @@ const sanitizeValue = (value?: string | null): string | undefined => {
   return normalized.length > 0 ? normalized : undefined;
 };
 
-const extractTagValue = (xml: string, tagName: string): string | undefined => {
-  const pattern = new RegExp(`<${tagName}(?:\s[^>]*)?>([\s\S]*?)<\/${tagName}>`, 'i');
-  const match = pattern.exec(xml);
-  return match ? sanitizeValue(match[1]) : undefined;
-};
+const buildContentSnippet = (raw?: string | null): string | undefined => sanitizeValue(raw);
 
-const extractFirstAvailable = (xml: string, tagNames: string[]): string | undefined => {
-  for (const tag of tagNames) {
-    const value = extractTagValue(xml, tag);
-    if (value) return value;
+const pickFirstSanitizedValue = (
+  item: RawNoteFeedItem,
+  fields: (keyof RawNoteFeedItem)[],
+): string | undefined => {
+  for (const field of fields) {
+    const raw = item[field];
+    if (typeof raw === 'string') {
+      const sanitized = sanitizeValue(raw);
+      if (sanitized) {
+        return sanitized;
+      }
+    }
   }
   return undefined;
 };
 
-const buildContentSnippet = (raw?: string): string | undefined => {
-  if (!raw) return undefined;
-  const withoutTags = raw.replace(/<[^>]*>/g, ' ');
-  const normalized = withoutTags.replace(/\s+/g, ' ').trim();
-  return normalized.length > 0 ? normalized : undefined;
+const parseDateValue = (value?: string | null): string | undefined => {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+};
+
+const pickFirstDateValue = (
+  item: RawNoteFeedItem,
+  fields: (keyof RawNoteFeedItem)[],
+): string | undefined => {
+  for (const field of fields) {
+    const raw = item[field];
+    const parsed = parseDateValue(typeof raw === 'string' ? raw : undefined);
+    if (parsed) {
+      return parsed;
+    }
+  }
+  return undefined;
 };
 
 export async function fetchNoteFeed(feedUrl: string, limit?: number): Promise<NoteFeedItem[]> {
@@ -72,28 +107,29 @@ export async function fetchNoteFeed(feedUrl: string, limit?: number): Promise<No
   }
 
   const xml = await response.text();
+  const feed = await parser.parseString(xml);
   const items: NoteFeedItem[] = [];
 
-  for (const match of xml.matchAll(ITEM_PATTERN)) {
-    const itemXml = match[0];
-    const title = extractFirstAvailable(itemXml, ['title']);
-    const link = extractFirstAvailable(itemXml, ['link', 'guid']);
-    const description = extractFirstAvailable(itemXml, ['content:encoded', 'description', 'summary']);
-    const dateValue = extractFirstAvailable(itemXml, ['pubDate', 'dc:date', 'updated']);
-
-    let isoDate: string | undefined;
-    if (dateValue) {
-      const parsed = new Date(dateValue);
-      if (!Number.isNaN(parsed.getTime())) {
-        isoDate = parsed.toISOString();
-      }
-    }
+  for (const entry of feed.items ?? []) {
+    const title = pickFirstSanitizedValue(entry, ['title']);
+    const link = pickFirstSanitizedValue(entry, ['link', 'guid']);
+    const contentSnippet = buildContentSnippet(
+      pickFirstSanitizedValue(entry, [
+        'content:encoded',
+        'content',
+        'summary',
+        'description',
+        'contentSnippet',
+      ]),
+    );
+    const isoDate =
+      pickFirstDateValue(entry, ['isoDate', 'pubDate', 'dc:date', 'updated']) ?? undefined;
 
     items.push({
       title,
       link,
       isoDate,
-      contentSnippet: buildContentSnippet(description),
+      contentSnippet,
     });
 
     if (limit && items.length >= limit) {
