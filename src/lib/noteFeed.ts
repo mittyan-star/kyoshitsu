@@ -31,10 +31,17 @@ const decodeHtmlEntities = (value: string): string =>
 
 const stripCData = (value: string) => value.replace(/<!\[CDATA\[|\]\]>/g, '');
 
+const CONTROL_CHARS_REGEX = /[\u0000-\u001F\u007F]+/g;
+
 const sanitizeValue = (value?: string | null): string | undefined => {
   if (!value) return undefined;
-  const trimmed = decodeHtmlEntities(stripCData(value)).trim();
-  return trimmed.length > 0 ? trimmed : undefined;
+
+  const decoded = decodeHtmlEntities(stripCData(value));
+  const withoutTags = decoded.replace(/<[^>]*>/g, ' ');
+  const withoutControlChars = withoutTags.replace(CONTROL_CHARS_REGEX, ' ');
+  const normalized = withoutControlChars.replace(/\s+/g, ' ').trim();
+
+  return normalized.length > 0 ? normalized : undefined;
 };
 
 const extractTagValue = (xml: string, tagName: string): string | undefined => {
