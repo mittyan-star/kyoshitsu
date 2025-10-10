@@ -1,18 +1,12 @@
 ---
-import Parser from 'rss-parser';
+import { fetchNoteFeed, type NoteFeedItem } from '../lib/noteFeed';
 
 export interface Props {
   feedUrl?: string;
   limit?: number;
   items?: NoteFeedItem[];
   emptyMessage?: string;
-}
-
-interface NoteFeedItem {
-  title?: string | null;
-  link?: string | null;
-  isoDate?: string | null;
-  contentSnippet?: string | null;
+  snippetLength?: number;
 }
 
 const {
@@ -20,25 +14,35 @@ const {
   limit = 10,
   items: initialItems,
   emptyMessage = '現在、noteの記事はまだありません。',
+  snippetLength,
 } = Astro.props;
 const className = Astro.props.class ?? '';
-
-const parser = new Parser();
 
 let items: NoteFeedItem[] = Array.isArray(initialItems) ? [...initialItems] : [];
 let hasError = false;
 
 if (items.length === 0 && feedUrl) {
   try {
-    const feed = await parser.parseURL(feedUrl);
-    items = (feed.items ?? []) as NoteFeedItem[];
+    items = await fetchNoteFeed(feedUrl, limit);
   } catch (error) {
     hasError = true;
     console.error('noteフィードの取得に失敗しました', error);
   }
 }
 
-const limitedItems = items.slice(0, limit);
+const formatSnippet = (snippet?: string | null) => {
+  if (!snippet) return undefined;
+  const normalized = snippet.trim();
+  if (!snippetLength || snippetLength <= 0 || normalized.length <= snippetLength) {
+    return normalized;
+  }
+  return `${normalized.slice(0, snippetLength)}…`;
+};
+
+const limitedItems = items.slice(0, limit).map((item) => ({
+  ...item,
+  contentSnippet: formatSnippet(item.contentSnippet),
+}));
 const listClass = ['space-y-4', className].filter(Boolean).join(' ');
 ---
 {hasError ? (

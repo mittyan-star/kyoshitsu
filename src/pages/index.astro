@@ -6,17 +6,14 @@ import NoteFeed from '../components/NoteFeed.astro';
 import { organizationSchema, breadcrumbSchema } from '../lib/schema';
 import { withBase } from '../lib/url';
 import { getCollection } from 'astro:content';
-import Parser from 'rss-parser';
+import { fetchNoteFeed } from '../lib/noteFeed';
 
-const NOTE_FEED_URL = 'https://note.com/chanto_holdings/rss/';
-const NOTE_FEED_LIMIT = 3;
-
-const parser = new Parser();
+const NOTE_FEED_URL = 'https://note.com/chanto_holdings/rss';
+const NOTE_FEED_LIMIT = 1;
 
 let noteItems = [];
 try {
-  const feed = await parser.parseURL(NOTE_FEED_URL);
-  noteItems = (feed.items ?? []).slice(0, NOTE_FEED_LIMIT);
+  noteItems = await fetchNoteFeed(NOTE_FEED_URL, NOTE_FEED_LIMIT);
 } catch (error) {
   console.error('noteフィードの取得に失敗しました', error);
 }
@@ -122,6 +119,7 @@ const structuredData = [
       items={noteItems}
       feedUrl={NOTE_FEED_URL}
       limit={NOTE_FEED_LIMIT}
+      snippetLength={30}
       emptyMessage="noteの記事を準備中です。"
     />
   </section>
